@@ -9,9 +9,9 @@ package friends {
         // Instance
         public var jumpState:uint = 0;
         public var altitude:Number = 0;
-        private var jumpSpeed:Number = 20;
-        private var fallSpeed:Number = 20;
-        private var jumpPeak:Number = 10;
+        private var jumpSpeed:Number = 30;
+        private var fallSpeed:Number = 30;
+        private var jumpPeak:Number = 5;
         
         private var jumpingVelocity:Number = 0;
         
@@ -27,12 +27,29 @@ package friends {
                 jumpingVelocity = jumpSpeed;
             }
 
+            /*
             if(jumpState == Friend.JUMPING && jumpingVelocity > 0) {
                 
             }
+            */
         }
 
         override public function update():void {
+            if(jumpState == Friend.JUMPING) {
+                scale.x = scale.y = 1 + ((altitude / jumpPeak) * 3);
+                altitude += jumpingVelocity * FlxG.elapsed;
+                if(altitude >= jumpPeak) {
+                    altitude = jumpPeak;
+                    jumpingVelocity *= -1;
+                } else if(altitude <= 0) {
+                    altitude = 0;
+                    jumpingVelocity = 0;
+                    jumpState = Friend.RUNNING;
+                }
+            } else {
+                scale.x = scale.y = 1;
+            }
+            
             super.update();
         }
     }
