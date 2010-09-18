@@ -19,7 +19,7 @@ TILE_LAYER_NAMES = ["backgroundTiles", "foregroundTiles"]
 #--------------------------------------
 
 def main():
-    build_assets()
+    #build_assets()
     #compile_levels()
     build_swf()
 
@@ -149,7 +149,7 @@ def build_swf():
      }
     
     if os.name == 'posix':
-        build_command = "mxmlc %(main_class_path)s -source-path=src/ -source-path=asset_library/ -output %(output_swf_path)s -static-link-runtime-shared-libraries -default-background-color 0 -default-size %(movie_width)s %(movie_height)s && flashplayer_10 %(output_swf_path)s" % build_data
+        build_command = "mxmlc %(main_class_path)s -source-path=src/ -output %(output_swf_path)s -static-link-runtime-shared-libraries -default-background-color 0 -default-size %(movie_width)s %(movie_height)s && flashplayer_10 %(output_swf_path)s" % build_data
     elif os.name == 'nt':
         build_command = 'mxmlc.exe %(main_class_path)s -source-path=src/ -output %(output_swf_path)s -static-link-runtime-shared-libraries -default-size %(movie_width)s %(movie_height)s && /c/flex4/runtimes/player/10/win/FlashPlayer.exe %(output_swf_path)s' % build_data
     else:

@@ -2,6 +2,7 @@ package friends {
     import org.flixel.*;
 
     public class PlayState extends FlxState {
+        private var background:FlxSprite;
         private var allFriends:FlxGroup;
         private var keys:Array;
         
@@ -15,6 +16,11 @@ package friends {
             }
 
             sortFriends();
+
+            background = new FlxSprite(0,0);
+            background.createGraphic(FlxG.width, FlxG.height, 0xff00ff00);
+            
+            add(background);
             add(allFriends);
         }
 
@@ -68,6 +74,7 @@ package friends {
                 var friend:Friend = allFriends.members[i];
                 friend.x = baseX + (i * spread);
                 friend.y = FlxG.height / 2;
+                friend.baseY = FlxG.height / 2;
             }
         }
     }
