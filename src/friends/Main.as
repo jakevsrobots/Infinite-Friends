@@ -6,7 +6,7 @@ package friends {
     
     public class Main extends FlxGame {
         public function Main():void {
-            super(640, 480, PlayState, 1);
+            super(320, 240, PlayState, 2);
 
             //useDefaultHotKeys = false;
             FlxG.mouse.show();
