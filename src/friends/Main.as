@@ -7,6 +7,11 @@ package friends {
     public class Main extends Engine {
         public function Main():void {
             super(640, 480, 60, false);
+
+            FP.console.enable();
+
+            FP.log('about to init world');
+            
             FP.world = new PlayWorld();
         }
 

@@ -27,6 +27,9 @@ package friends {
 
             friendSprite.add('running', [0,1,2,3,4,5,6,7,8], 20 + (Math.random() * 4), true);
             friendSprite.add('jumping', [0], 16, false);
+
+            friendSprite.originX = 15;
+            friendSprite.originY = 31;
             
             graphic = friendSprite;
 

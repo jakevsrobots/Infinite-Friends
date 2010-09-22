@@ -8,13 +8,15 @@ package friends {
         private var allFriends:Array;
         private var keys:Array;
         
-        public function FriendWorld():void {
+        public function PlayWorld():void {
+            super();
+            
             keys = [
                 // Left:
                 Key.A, Key.S, Key.D, Key.F,
 
                 // Right:
-                Key.J, Key.K, Key.L, 59 // 59 = semicolon
+                Key.J, Key.K, Key.L, 186 // 186 = semicolon
             ];
             
             var startingFriends:int = 8;
@@ -31,6 +33,7 @@ package friends {
         override public function update():void {
             for each(var key:int in keys) {
                 if(Input.pressed(key)) {
+                    FP.log('pressed ' + key);
                     pressKey(key);
                 }
             }
@@ -40,10 +43,10 @@ package friends {
 
         public function sortFriends():void {
             var spread:int = 32;
-            var baseX:int = (FP.width / 2) - ((allFriends.members.length * spread) / 2);
+            var baseX:int = (FP.width / 2) - ((allFriends.length * spread) / 2);
             
-            for(var i:uint = 0; i < allFriends.members.length; i++) {
-                var friend:Friend = allFriends.members[i];
+            for(var i:uint = 0; i < allFriends.length; i++) {
+                var friend:Friend = allFriends[i];
                 friend.x = baseX + (i * spread);
                 friend.y = (FP.height / 2) + (FP.height / 4);
                 friend.baseY = friend.y;

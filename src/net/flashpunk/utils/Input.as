@@ -219,10 +219,10 @@
 		{
 			// get the keycode
 			var code:int = lastKey = e.keyCode;
-			
+
 			// update the keystring
 			if (code == Key.BACKSPACE) keyString = keyString.substring(0, keyString.length - 1);
-			else if ((code > 47 && code < 58) || (code > 64 && code < 91) || code == 32)
+			else if ((code > 47 && code < 58) || (code > 64 && code < 91) || code == 32 || code == 186)
 			{
 				if (keyString.length > KEYSTRING_MAX) keyString = keyString.substring(1);
 				var char:String = String.fromCharCode(code);
