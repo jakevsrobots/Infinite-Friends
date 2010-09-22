@@ -1,14 +1,14 @@
 package friends {
-    import org.flixel.*;
-
-    public class Friend extends FlxSprite {
-        [Embed (source="/../data/friend.png")]
-        private var FriendGraphic:Class;
-                
+    import net.flashpunk.Entity;
+    import net.flashpunk.graphics.Spritemap;
+    import net.flashpunk.FP;
+    
+    public class Friend extends Entity {
+        // Static
         // Static
         public static var RUNNING:uint = 0;
         public static var JUMPING:uint = 1;
-
+        
         // Instance
         public var jumpState:uint = 0;
         public var altitude:Number = 0;
@@ -18,29 +18,28 @@ package friends {
         private var jumpPeak:Number = 5;
         private var jumpingVelocity:Number = 0;
         
+        [Embed (source="/../data/friend.png")]
+        private var FriendGraphic:Class;
+        public var friendSprite:Spritemap;
+        
         public function Friend(x:Number, y:Number):void {
-            super(x, y);
+            friendSprite = new Spritemap(FriendGraphic, 32, 32);
 
-            baseY = y;
+            friendSprite.add('running', [0,1,2,3,4,5,6,7,8], 20 + (Math.random() * 4), true);
+            friendSprite.add('jumping', [0], 16, false);
             
-            //createGraphic(16, 16, 0xffffffff, true);
-            loadGraphic(FriendGraphic, true, false, 32, 32);
-            addAnimation('running', [0,1,2,3,4,5,6,7,8], 20 + (Math.random() * 4), true);
-            addAnimation('jumping', [0], 16, false);
-        }
+            graphic = friendSprite;
 
-        public function jump():void {
-            if(jumpState == Friend.RUNNING) {
-                jumpState = Friend.JUMPING;
-                jumpingVelocity = jumpSpeed;
-            }
+            friendSprite.play('running');
+
+            super(x, y);
         }
 
         override public function update():void {
             if(jumpState == Friend.JUMPING) {
-                play('jumping');
-                scale.x = scale.y = 1 + ((altitude / jumpPeak) * 3);
-                altitude += jumpingVelocity * FlxG.elapsed;
+                friendSprite.play('jumping');
+                friendSprite.scale = 1 + ((altitude / jumpPeak) * 3);
+                altitude += jumpingVelocity * FP.elapsed;
                 if(altitude >= jumpPeak) {
                     altitude = jumpPeak;
                     jumpingVelocity *= -1;
@@ -49,14 +48,21 @@ package friends {
                     jumpingVelocity = 0;
                     jumpState = Friend.RUNNING;
                 }
-                y = baseY - (scale.y * 32);
+                y = baseY - (friendSprite.scale * 32);
             } else {
-                play('running');
-                scale.x = scale.y = 1;
+                friendSprite.play('running');
+                friendSprite.scale = 1;
                 y = baseY;
             }
             
             super.update();
+        }
+        
+        public function jump():void {
+            if(jumpState == Friend.RUNNING) {
+                jumpState = Friend.JUMPING;
+                jumpingVelocity = jumpSpeed;
+            }
         }
     }
 }

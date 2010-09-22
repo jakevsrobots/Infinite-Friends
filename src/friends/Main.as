@@ -1,15 +1,17 @@
 package friends {
-    import org.flixel.FlxGame;
-    import org.flixel.FlxG;    
-
+    import net.flashpunk.Engine;
+    import net.flashpunk.FP;
+    
     [SWF(width="640", height="480", backgroundColor="#000000")];
     
-    public class Main extends FlxGame {
+    public class Main extends Engine {
         public function Main():void {
-            super(320, 240, PlayState, 2);
+            super(640, 480, 60, false);
+            FP.world = new PlayWorld();
+        }
 
-            //useDefaultHotKeys = false;
-            FlxG.mouse.show();
+        override public function init():void {
+            //trace('loaded');
         }
     }
 }
