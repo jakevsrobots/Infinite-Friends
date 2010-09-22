@@ -5,7 +5,6 @@ package friends {
     
     public class Friend extends Entity {
         // Static
-        // Static
         public static var RUNNING:uint = 0;
         public static var JUMPING:uint = 1;
         
@@ -30,6 +29,8 @@ package friends {
 
             friendSprite.originX = 15;
             friendSprite.originY = 31;
+
+            friendSprite.smooth = false;
             
             graphic = friendSprite;
 
@@ -57,7 +58,7 @@ package friends {
                 friendSprite.scale = 1;
                 y = baseY;
             }
-            
+
             super.update();
         }
         

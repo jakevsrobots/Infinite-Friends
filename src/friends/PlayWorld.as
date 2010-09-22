@@ -3,14 +3,18 @@ package friends {
     import net.flashpunk.FP;
     import net.flashpunk.utils.Input;
     import net.flashpunk.utils.Key;    
+    import net.flashpunk.graphics.Image;
     
     public class PlayWorld extends World {
+        // Instance
         private var allFriends:Array;
         private var keys:Array;
-        
+        private var background:Background;
+
         public function PlayWorld():void {
             super();
-            
+
+            // Setup keys to control friends.
             keys = [
                 // Left:
                 Key.A, Key.S, Key.D, Key.F,
@@ -18,7 +22,12 @@ package friends {
                 // Right:
                 Key.J, Key.K, Key.L, 186 // 186 = semicolon
             ];
+
+            // Setup background.
+            background = new Background();
+            add(background);
             
+            // Setup friends.
             var startingFriends:int = 8;
             allFriends = [];
             for(var i:uint = 0; i < startingFriends; i++) {
