@@ -25,9 +25,9 @@ package friends {
         private var keyLabel:Text;
 
         // Physics
-        public var gravity:Number = 0.4;
+        public var gravity:Number = 120;
         public var friction:Point = new Point(0,0);
-        public var maxSpeed:Point = new Point(0,0);
+        public var maxSpeed:Point = new Point(200,200);
         public var speed:Point = new Point(0,0);
         public var acceleration:Point = new Point(0,0);
         public var onGround:Boolean = false;
@@ -44,7 +44,7 @@ package friends {
             friendSprite.add('jumping', [0], 16, false);
 
             friendSprite.originX = 15;
-            friendSprite.originY = 31;
+            friendSprite.originY = 15;
             friendSprite.smooth = false;
             friendSprite.play('running');
             
@@ -52,32 +52,69 @@ package friends {
             keyLabel = new Text(Key.name(this.key), 12, -16);
             graphic = new Graphiclist(friendSprite, keyLabel);
 
-            setHitBox(32, 32, 0, 0);
+            setHitbox(32, 32, 0, 0);
             type = "friend";
+
+            speed.x = maxSpeed.x;
             
             super(x, y);
         }
 
         override public function update():void {
             // Find out if friend is on the ground
-            onground = false;
+            onGround = false;
             if(collide('solid', x, y+1)) {
-                onground = true;
+                onGround = true;
             }
 
             // Do gravity flip
             if(Input.pressed(key)) {
                 gravity *= -1;
+                if(friendSprite.angle == 180) {
+                    friendSprite.angle = 0;                    
+                } else {
+                    friendSprite.angle = 180;
+                }
             }
             
             // Apply gravity;
             speed.y += gravity;
             
             // Apply max speed
-            
+            if(Math.abs(speed.x) > maxSpeed.x) {
+                speed.x = maxSpeed.x * FP.sign(speed.x);
+            }
+            if(Math.abs(speed.y) > maxSpeed.y) {
+                speed.y = maxSpeed.y * FP.sign(speed.y);
+            }
 
-            // Apply motion
+            // Get speed relative to just the amount of time passed in this frame
+            var frameSpeed:Point = new Point(speed.x * FP.elapsed, speed.y * FP.elapsed);
             
+            // Apply horizontal motion, if the friend is on the ground
+            if(onGround) {
+                for(var i:int = 0; i < Math.abs(frameSpeed.x); i++) {
+                    if(!collide("wall", x + FP.sign(frameSpeed.x), y)) {
+                        x += FP.sign(frameSpeed.x);
+                    } else {
+                        // Hit a wall, turn around.
+                        speed.x *= -1;
+                        break;
+                    }
+                }
+            }
+            
+            // Apply vertical motion            
+            for(var j:int = 0; j < Math.abs(frameSpeed.y); j++) {
+                if(!collide("wall", x, y + FP.sign(frameSpeed.y))) {
+                    y += FP.sign(frameSpeed.y);
+                } else {
+                    // Hit a wall, stop.
+                    speed.y = 0;
+                    break;
+                }
+            }
+
             /*
             if(jumpState == Friend.JUMPING) {
                 friendSprite.play('jumping');
@@ -118,11 +155,6 @@ package friends {
             if(keyLabel != null) {
                 keyLabel.text = Key.name(value);
             }
-        }
-
-        public function setPosition(x:Number, y:Number):void {
-            this.x = x;
-            this.y = y;
         }
     }
 }

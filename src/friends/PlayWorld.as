@@ -32,21 +32,17 @@ package friends {
             // Setup background.
             background = new Background();
             add(background);
-            
-            // Setup friends.
-            var startingFriends:int = 1;
+
+            // Set up testing friend and walls
             allFriends = [];
-            for(var i:uint = 0; i < startingFriends; i++) {
-                var friend:Friend = new Friend(0, 0)
-                friend.key = getRandomKey();
-                
-                add(friend);
-                allFriends.push(friend);
-            }
-
-            sortFriends();
-
-            title = new TextMessage('hi', FP.width / 2, FP.height / 2);
+            var friend:Friend = new Friend(FP.width / 2, FP.height / 2);
+            friend.key = getRandomKey();
+            add(friend);
+            allFriends.push(friend);
+            
+            add(new Wall(friend.x - 64, friend.y + 64, 128, 16));
+            
+            //title = new TextMessage('hi', FP.width / 2, FP.height / 2);
             //add(title);
         }
 
@@ -66,7 +62,8 @@ package friends {
             
             for(var i:uint = 0; i < allFriends.length; i++) {
                 var friend:Friend = allFriends[i];
-                friend.setPosition(baseX + (i * spread), (FP.height / 2) + (FP.height / 4));
+                friend.x = baseX + (i * spread)
+                friend.y = (FP.height / 2) + (FP.height / 4);
                 friend.baseY = friend.y;
             }
         }
