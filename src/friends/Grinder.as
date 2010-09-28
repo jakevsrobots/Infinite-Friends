@@ -8,6 +8,7 @@ package friends {
         private var GrinderGraphic:Class;
         
         private var grinderSprite:TiledSpritemap;
+        private var colorSwitchAccum:Number = 0;
         
         public function Grinder(x:int, y:int):void {
             super();
@@ -25,6 +26,27 @@ package friends {
             setHitbox(FP.width, 32, 0, 0);
             
             type = 'grinder';
+        }
+
+
+        private function setRandomColor():void {
+            // Try to generate random 'bright' colors by
+            // working in Hue/Saturation/Value colorspace instead of RGB.
+            var hue:Number = Math.random() * 360;
+            var saturation:Number = 200;
+            var value:Number = 200;
+            var hsvcolor:Array = ColorUtils.HSVtoRGB(hue, saturation, value);
+            grinderSprite.color = ColorUtils.RGBToHex(hsvcolor[0],hsvcolor[1],hsvcolor[2]);
+        }
+        
+        override public function update():void {
+            colorSwitchAccum += FP.elapsed;
+            if(colorSwitchAccum >= 0.125) {
+                setRandomColor();
+                colorSwitchAccum = 0;
+            }
+            
+            super.update();
         }
     }
 }

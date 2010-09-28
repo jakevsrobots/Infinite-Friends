@@ -13,7 +13,7 @@ package friends {
         private var allKeys:Array;
         private var usedKeys:Array;        
         private var background:Background;
-        private var title:TextMessage;
+        private var globalTitle:TextMessage;
         private var highestPointBuilt:int;
         private var topGrinder:Grinder;        
         private var bottomGrinder:Grinder;
@@ -43,17 +43,6 @@ package friends {
             sleepingFriends = [];
             activeFriends = [];
             
-            // Set up testing friend and walls
-            /*
-            var friend:Friend = new Friend(FP.width / 2, FP.height / 2);
-            friend.key = getRandomKey();
-            add(friend);
-            activeFriends.push(friend);
-            */
-            
-            //add(new Wall(0, friend.y + 64, FP.width, 16));
-
-            //highestPointBuilt = friend.y + 128;
             highestPointBuilt = FP.camera.y + FP.height;
 
             var bottomWall:Wall = create(Wall) as Wall;
@@ -67,13 +56,10 @@ package friends {
             add(bottomGrinder);
             
             topGrinder.layer = bottomGrinder.layer = 0;
-            
-            //FP.camera.y = -440;
-            
-            //title = new TextMessage('hi', FP.width / 2, FP.height / 2);
-            //add(title);
-            
-            //FP.watch(FP.camera.y);
+
+            globalTitle = new TextMessage();
+            globalTitle.reset("Press buttons \n to have friends!", 0, FP.camera.y, 48, false, false);
+            add(globalTitle);
         }
         
         override public function update():void {
@@ -81,10 +67,10 @@ package friends {
             
             FP.camera.y -= 15 * FP.elapsed;
             
-            //FP.log('active friends: ' + activeFriends.length);
-
             topGrinder.y = FP.camera.y - 16;
             bottomGrinder.y = FP.camera.y + FP.height - 16;
+
+            globalTitle.y = FP.camera.y + (FP.height / 2);
             
             super.update();
         }
@@ -112,8 +98,15 @@ package friends {
         public function removeFriend(friend:Friend):void {
             if(activeFriends.indexOf(friend) != -1) {
                 activeFriends.splice(activeFriends.indexOf(friend), 1);
+
             } else if(sleepingFriends.indexOf(friend) != -1) {
                 sleepingFriends.splice(sleepingFriends.indexOf(friend), 1);
+            }
+
+            if(activeFriends.length == 0) {
+                globalTitle.reset("Press buttons \nto have friends!", 0, FP.camera.y, 48, false, false);
+            } else {
+                showFriendsText();
             }
             
             recycle(friend);
@@ -125,8 +118,23 @@ package friends {
             }
             
             if(activeFriends.indexOf(friend) == -1) {
+                if(activeFriends.length == 0) {
+                    globalTitle.autoFade = true;
+                }
+                
                 activeFriends.push(friend);
             }
+
+            showFriendsText();
+        }
+
+        private function showFriendsText():void {
+            var title:TextMessage = create(TextMessage) as TextMessage;
+            var text:String = '' + activeFriends.length + ' friend';
+            if(activeFriends.length != 1) {
+                text += 's';
+            }
+            title.reset(text, 0, FP.camera.y + (FP.height / 4), 48);
         }
 
         private function buildNewWorldParts():void {
@@ -171,9 +179,14 @@ package friends {
 
             var foundGoodSpotForFriend:Boolean = false;
             while(!foundGoodSpotForFriend) {
-                friendX = Math.random() * FP.width;                
-                
+                friendX = Math.random() * FP.width;
                 foundGoodSpotForFriend = true;
+
+                if(friendX + 32 >= FP.width) {
+                    foundGoodSpotForFriend = false;
+                    continue;
+                }
+                
                 if(friendX + 32 > holeStart && friendX < holeEnd) {
                     foundGoodSpotForFriend = false;
                     continue;
@@ -193,7 +206,6 @@ package friends {
 
         public function explodeFriend(friend:Friend):void {
              var explosion:Explosion = create(Explosion) as Explosion;
-            //explosion.reset(friend.x + (friend.width / 2), friend.y + (friend.height / 2));
             explosion.reset(friend.x, friend.y, friend.friendSprite.color);
             removeFriend(friend);
         }
