@@ -1,23 +1,30 @@
 package friends {
 	import flash.geom.Rectangle;    
     import net.flashpunk.Entity;
-    import net.flashpunk.graphics.Canvas;
+    import net.flashpunk.FP;    
+    import net.flashpunk.graphics.TiledImage;    
     
     public class Wall extends Entity {
-        public var wallSprite:Canvas;
+        [Embed (source="/../data/wall.png")]
+        private var WallGraphic:Class;
         
-        public function Wall(x:int, y:int, width:int = 16, height:int = 16):void {
-            wallSprite = new Canvas(width, height);
-            wallSprite.fill(new Rectangle(0, 0, width, height));
-            
+        public var wallSprite:TiledImage;
+        
+        public function Wall(x:int = 0, y:int = 0, width:int = 16, height:int = 16):void {
+            reset(x,y,width,height);
+            type = "wall";
             graphic = wallSprite;
+        }
+
+        public function reset(x:int, y:int, width:int, height:int):void {
+            wallSprite = new TiledImage(WallGraphic, width, height);
             
             setHitbox(width, height);
 
             this.x = x;
             this.y = y;
-            
-            type = "wall";
+
+            graphic = wallSprite;
         }
     }
 }
