@@ -8,6 +8,7 @@ package friends {
         
         public function Background():void {
             graphic = new Backdrop(BackgroundGraphic);
+            layer = 10;
         }
     }
 }

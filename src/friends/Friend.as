@@ -35,7 +35,7 @@ package friends {
         
         [Embed (source="/../data/friend.png")]
         private var FriendGraphic:Class;
-        private var friendSprite:Spritemap;
+        public var friendSprite:Spritemap;
 
         public function Friend(x:Number = 0, y:Number = 0):void {
             super();
@@ -43,12 +43,14 @@ package friends {
             friendSprite = new Spritemap(FriendGraphic, 32, 32);
 
             friendSprite.add('running', [0,1,2,3,4,5,6,7,8], 20 + (Math.random() * 4), true);
+            friendSprite.add('standing', [0], 16, false);            
             friendSprite.add('jumping', [0], 16, false);
 
             friendSprite.originX = 15;
             friendSprite.originY = 15;
             friendSprite.smooth = false;
-            friendSprite.play('running');
+            
+            friendSprite.play('standing');
 
             setHitbox(32, 32, 0, 0);
 
@@ -58,6 +60,8 @@ package friends {
             type = "friend";
 
             reset(x, y, Key.Q);
+
+            layer = 1;
         }
 
         public function reset(x:Number, y:Number, key:int):void {
@@ -66,6 +70,24 @@ package friends {
             this.y = y;
             speed.x = maxSpeed.x;
             asleep = true;
+            friendSprite.play('standing');
+            gravity = 120;
+            friendSprite.angle = 0;
+            keyLabel.x = 12;
+            keyLabel.y = -16;
+            setRandomColor();
+        }
+
+        private function setRandomColor():void {
+                // Try to generate random 'bright' colors by
+                // working in Hue/Saturation/Value colorspace instead of RGB.
+                var hue:Number = Math.random() * 360;
+                var saturation:Number = 100;
+                var value:Number = 200;
+                var hsvcolor:Array = ColorUtils.HSVtoRGB(hue, saturation, value);
+                friendSprite.color = ColorUtils.RGBToHex(hsvcolor[0],hsvcolor[1],hsvcolor[2]);
+                
+                //this.color = uint(Math.random() * 16777.215) * 1000;
         }
         
         override public function update():void {
@@ -78,6 +100,8 @@ package friends {
             if(asleep) {
                 if(Input.pressed(key)) {
                     asleep = false;
+                    (FP.world as PlayWorld).activateFriend(this);
+                    friendSprite.play('running');                    
                 }
                 return;
             }
@@ -86,9 +110,14 @@ package friends {
             if(Input.pressed(key)) {
                 gravity *= -1;
                 if(friendSprite.angle == 180) {
-                    friendSprite.angle = 0;                    
+                    friendSprite.angle = 0;
+                    //keyLabel.angle = 0;
+                    keyLabel.x = 12;
+                    keyLabel.y = -16;
                 } else {
                     friendSprite.angle = 180;
+                    keyLabel.x = 12;
+                    keyLabel.y = 32;
                 }
             }
 
@@ -113,17 +142,16 @@ package friends {
                     var nextX:int = x + FP.sign(frameSpeed.x);
                     if(nextX >= FP.width - width || nextX <= 0) {
                         speed.x *= -1;
+                        break;
                     }
                     
                     x += FP.sign(frameSpeed.x);
                     
-                    /*
-                    if(!collide("wall", x + FP.sign(frameSpeed.x), y)) {
-                    } else {
+                    if(collide("wall", x + FP.sign(frameSpeed.x), y)) {
                         // Hit a wall, turn around.
                         speed.x *= -1;
                         break;
-                    }*/
+                    }
                 }
             }
             
@@ -138,37 +166,19 @@ package friends {
                 }
             }
 
-            /*
-            if(jumpState == Friend.JUMPING) {
-                friendSprite.play('jumping');
-                friendSprite.scale = 1 + ((altitude / jumpPeak) * 3);
-                altitude += jumpingVelocity * FP.elapsed;
-                if(altitude >= jumpPeak) {
-                    altitude = jumpPeak;
-                    jumpingVelocity *= -1;
-                } else if(altitude <= 0) {
-                    altitude = 0;
-                    jumpingVelocity = 0;
-                    jumpState = Friend.RUNNING;
-                }
-                y = baseY - (friendSprite.scale * 32);
-            } else {
-                friendSprite.play('running');
-                friendSprite.scale = 1;
-                y = baseY;
-            }
-            */
-
             super.update();
+            
+            // Check for screen boundaries
+            if(y + (height * 2) < FP.camera.y || y - (height * 2) > FP.camera.y + FP.height) {
+                (FP.world as PlayWorld).removeFriend(this);
+            }
+
+            // Check for grinder
+            if(collide('grinder', x, y)) {
+                (FP.world as PlayWorld).explodeFriend(this);
+            }
         }
         
-        public function jump():void {
-            if(jumpState == Friend.RUNNING) {
-                jumpState = Friend.JUMPING;
-                jumpingVelocity = jumpSpeed;
-            }
-        }
-
         public function get key():int {
             return _key;
         }

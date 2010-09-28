@@ -14,6 +14,8 @@ package friends {
             reset(x,y,width,height);
             type = "wall";
             graphic = wallSprite;
+
+            layer = 5;
         }
 
         public function reset(x:int, y:int, width:int, height:int):void {
@@ -25,6 +27,12 @@ package friends {
             this.y = y;
 
             graphic = wallSprite;
+        }
+
+        override public function update():void {
+            if(y + (height * 2) < FP.camera.y || y - (height * 2) > FP.camera.y + FP.height) {
+                FP.world.recycle(this);
+            }
         }
     }
 }

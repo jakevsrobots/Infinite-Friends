@@ -10,8 +10,8 @@ ASSET_BASE = '/../data/'
 ASSET_XML_FILE = os.path.join(BASE_PATH, '../data/assets.xml')
 OUTPUT_SWF_PATH = 'output/InfiniteFriends.swf'
 MAIN_CLASS_PATH = 'src/friends/Main.as'
-OUTPUT_WIDTH = 640
-OUTPUT_HEIGHT = 480
+OUTPUT_WIDTH = 480
+OUTPUT_HEIGHT = 640
 
 MAP_SRC_DIR = os.path.join(BASE_PATH, '../data/maps')
 MAP_COMPILED_DIR = os.path.join(BASE_PATH, '../data/maps/compiled')
