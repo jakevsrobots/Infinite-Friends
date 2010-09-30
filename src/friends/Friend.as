@@ -1,5 +1,6 @@
 package friends {
     import flash.geom.Point;
+    import net.flashpunk.Sfx;    
     import net.flashpunk.Entity;
     import net.flashpunk.FP;
     import net.flashpunk.utils.Input;
@@ -29,6 +30,7 @@ package friends {
         public var gravity:Number = 120;
         public var friction:Point = new Point(0,0);
         public var maxSpeed:Point = new Point(100,120);
+        public var absMaxSpeed:Point = new Point(100,120);        
         public var speed:Point = new Point(0,0);
         public var acceleration:Point = new Point(0,0);
         public var onGround:Boolean = false;
@@ -37,6 +39,17 @@ package friends {
         private var FriendGraphic:Class;
         public var friendSprite:Spritemap;
 
+        [Embed(source='/../data/friendget.mp3')]
+        private var FriendGetSoundData:Class;
+        [Embed(source='/../data/flip.mp3')]
+        private var FlipSoundData:Class;
+        [Embed(source='/../data/explode.mp3')]
+        private var ExplodeSoundData:Class;
+
+        private var flipSound:Sfx;
+        private var activateSound:Sfx;
+        private var explodeSound:Sfx;                
+        
         public function Friend(x:Number = 0, y:Number = 0):void {
             super();
 
@@ -62,6 +75,10 @@ package friends {
             reset(x, y, Key.Q);
 
             layer = 1;
+
+            flipSound = new Sfx(FlipSoundData);
+            activateSound = new Sfx(FriendGetSoundData);
+            explodeSound = new Sfx(ExplodeSoundData);            
         }
 
         public function reset(x:Number, y:Number, key:int):void {
@@ -79,18 +96,22 @@ package friends {
         }
 
         private function setRandomColor():void {
-                // Try to generate random 'bright' colors by
-                // working in Hue/Saturation/Value colorspace instead of RGB.
-                var hue:Number = Math.random() * 360;
-                var saturation:Number = 100;
-                var value:Number = 200;
-                var hsvcolor:Array = ColorUtils.HSVtoRGB(hue, saturation, value);
-                friendSprite.color = ColorUtils.RGBToHex(hsvcolor[0],hsvcolor[1],hsvcolor[2]);
-                
-                //this.color = uint(Math.random() * 16777.215) * 1000;
+            // Try to generate random 'bright' colors by
+            // working in Hue/Saturation/Value colorspace instead of RGB.
+            var hue:Number = Math.random() * 360;
+            var saturation:Number = 100;
+            var value:Number = 200;
+            var hsvcolor:Array = ColorUtils.HSVtoRGB(hue, saturation, value);
+            friendSprite.color = ColorUtils.RGBToHex(hsvcolor[0],hsvcolor[1],hsvcolor[2]);
+            
+            //this.color = uint(Math.random() * 16777.215) * 1000;
         }
         
         override public function update():void {
+            // speed adjustment
+            maxSpeed.x = absMaxSpeed.x * (FP.world as PlayWorld).globalSpeedModifier;
+            maxSpeed.y = absMaxSpeed.y * (FP.world as PlayWorld).globalSpeedModifier;
+            
             // Find out if friend is on the ground
             onGround = false;
             if(collide('wall', x, y + FP.sign(gravity))) {
@@ -99,6 +120,7 @@ package friends {
 
             if(asleep) {
                 if(Input.pressed(key)) {
+                    activateSound.play(0.5);
                     asleep = false;
                     (FP.world as PlayWorld).activateFriend(this);
                     friendSprite.play('running');                    
@@ -108,6 +130,8 @@ package friends {
             
             // Do gravity flip
             if(Input.pressed(key)) {
+                flipSound.play(0.5);
+                
                 gravity *= -1;
                 if(friendSprite.angle == 180) {
                     friendSprite.angle = 0;
@@ -175,6 +199,7 @@ package friends {
 
             // Check for grinder
             if(collide('grinder', x, y)) {
+                explodeSound.play();
                 (FP.world as PlayWorld).explodeFriend(this);
             }
         }

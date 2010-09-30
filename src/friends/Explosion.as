@@ -38,7 +38,7 @@ package friends {
                 particleEmitter.setColor("chunk_" + i, color)
             }
             
-            for(var j:int = 0; j < 200; j++) {
+            for(var j:int = 0; j < 80; j++) {
                 particleEmitter.emit("chunk_" + int(Math.random() * numberOfFrames), Math.random() * 32, Math.random() * 32);
             }
         }
