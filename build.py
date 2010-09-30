@@ -9,9 +9,10 @@ BASE_PATH = os.path.join(os.path.dirname(__file__), 'asset_library')
 ASSET_BASE = '/../data/'
 ASSET_XML_FILE = os.path.join(BASE_PATH, '../data/assets.xml')
 OUTPUT_SWF_PATH = 'output/InfiniteFriends.swf'
-MAIN_CLASS_PATH = 'src/friends/Main.as'
+#MAIN_CLASS_PATH = 'src/friends/Main.as'
+MAIN_CLASS_PATH = 'src/Preloader.as'
 OUTPUT_WIDTH = 480
-OUTPUT_HEIGHT = 640
+OUTPUT_HEIGHT = 540
 
 MAP_SRC_DIR = os.path.join(BASE_PATH, '../data/maps')
 MAP_COMPILED_DIR = os.path.join(BASE_PATH, '../data/maps/compiled')
@@ -150,7 +151,7 @@ def build_swf():
     
     if os.name == 'posix':
         # add -debug to get traces on command line
-        build_command = "mxmlc %(main_class_path)s -source-path=src/ -output %(output_swf_path)s -static-link-runtime-shared-libraries -default-background-color 0 -default-size %(movie_width)s %(movie_height)s && flashplayer_10 %(output_swf_path)s" % build_data
+        build_command = "mxmlc %(main_class_path)s -source-path=src/ -output %(output_swf_path)s -static-link-runtime-shared-libraries -default-background-color 0 -frame 2 friends.Main -default-size %(movie_width)s %(movie_height)s && flashplayer_10 %(output_swf_path)s" % build_data
     elif os.name == 'nt':
         build_command = 'mxmlc.exe %(main_class_path)s -source-path=src/ -output %(output_swf_path)s -static-link-runtime-shared-libraries -default-size %(movie_width)s %(movie_height)s && /c/flex4/runtimes/player/10/win/FlashPlayer.exe %(output_swf_path)s' % build_data
     else:

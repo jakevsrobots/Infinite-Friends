@@ -82,7 +82,7 @@ package friends {
             topGrinder.layer = bottomGrinder.layer = 0;
 
             globalTitle = new TextMessage();
-            globalTitle.reset("Press buttons \n to have friends!", 0, FP.camera.y, 48, false, false);
+            globalTitle.reset("Press buttons \nto have friends!\n(& press buttons\n to flip them)", 0, FP.camera.y, 48, false, false);
             add(globalTitle);
             
             gameTitle = new TextMessage();
@@ -183,7 +183,7 @@ package friends {
             }
 
             if(activeFriends.length == 0) {
-                globalTitle.reset("Press buttons \nto have friends!", 0, FP.camera.y, 48, false, false);
+                globalTitle.reset("Press buttons \nto have friends!\n(& press buttons\n to flip them)", 0, FP.camera.y, 48, false, false);                
                 gameTitle.reset("INFINITE FRIENDS", 0, FP.camera.y - 128, 48, false, false);
             } else {
                 showFriendsText();
